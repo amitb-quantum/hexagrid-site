@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HexaGrid — AI-Native Infrastructure Control Plane</title>
+<meta name="description" content="Constraint-solver scheduling for GPU fleets. Run your workload when power is cheaper. No agents, no hardware changes, no redesign of your cluster.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">HexaGrid™</a>
+    <nav>
+      <a href="#results">Results</a>
+      <a href="#method">Method</a>
+      <a href="#limits">What it does not do yet</a>
+      <a href="#pilot">Pilot</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">AI-native infrastructure control plane</p>
+      <h1>Run your workload when power is <em>cheaper</em>.</h1>
+      <p class="lede">HexaGrid reads live wholesale electricity prices across five US grid regions and reschedules deferrable GPU jobs into the cheap hours. No agents, no hardware changes, no redesign of your cluster.</p>
+      <p class="regions">CAISO · ERCOT · NYISO · ISO-NE · PJM</p>
+      <div class="stats">
+        <div class="stat">
+          <strong>13.8%</strong>
+          <span>Lower energy cost than running jobs on arrival, when work can be freely deferred. Range 12.2–15.4% across 300 runs.</span>
+        </div>
+        <div class="stat">
+          <strong>88%</strong>
+          <span>Of what perfect foresight could have saved on the same jobs. The theoretical ceiling is 16.0%, and we publish it.</span>
+        </div>
+        <div class="stat">
+          <strong>0.00%</strong>
+          <span>Savings reported on a flat price curve, across all 50 runs, where there is nothing to save.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results" class="section">
+    <div class="wrap">
+      <h2>Every number, and what it depends on</h2>
+      <p>These come from a 300-run benchmark sweep across five ISO price profiles and multiple random seeds, reported with confidence intervals. Prices are synthetic, built to match the daily shape of real ISO curves; validation against live market data is pending. Where a result only holds under a condition, the condition is stated beside it.</p>
+      <table>
+        <thead><tr><th>Measured</th><th>Holds when</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>13.8% lower cost</strong><br>Confidence interval 12.2–15.4% over 300 runs, against dispatching each job on arrival.</td>
+            <td>Your work is genuinely deferrable. At 40% deferrable the saving is 5.8% (5.1–6.4%). Savings scale almost linearly with the share of jobs that can wait, so your job mix decides this number far more than your region does.</td>
+          </tr>
+          <tr>
+            <td><strong>88% of the ceiling</strong><br>Perfect foresight — knowing every price in advance, deferring everything — saves 16.0% on this data. We reach 13.8% of it.</td>
+            <td>The ceiling is the honest limit of the idea, and it is lower than the figures usually quoted in this category. Any saving claimed above it on comparable data is not achievable.</td>
+          </tr>
+          <tr>
+            <td><strong>0.00% on a flat curve</strong></td>
+            <td>Always. This is a null test run on every build, and it is the check an earlier version of this code failed.</td>
+          </tr>
+          <tr>
+            <td><strong>5× better demand forecast</strong><br>Facility demand 30 minutes out, against a last-value baseline. The margin widens with horizon: 9× at 60 minutes, 12× at 120.</td>
+            <td>Validated on held-out data the model never saw. Error stays flat near 0.6 kW across all three horizons while the baseline degrades from 2.9 to 7.3 kW.</td>
+          </tr>
+          <tr>
+            <td><strong>Cost and carbon, never merged</strong><br>The same schedule can be tuned toward money or toward emissions, and the solver will find either end of that trade.</td>
+            <td>We publish no carbon figure. The carbon signal in our benchmark is synthetic, scaled to an EPA annual average rather than measured, so any number would be an artefact of our own assumptions. The mechanism works; the magnitude is unverified.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="limits" class="section alt">
+    <div class="wrap">
+      <h2>What HexaGrid does not do yet</h2>
+      <p>Published here so you find it now rather than in week two of a pilot.</p>
+      <ul class="limits">
+        <li><strong>Multi-region routing</strong> — Not implemented. Scheduling is single-region. Moving work between regions needs a transfer-cost model we have not built, so any cross-region saving figure would be unfounded and we do not publish one.</li>
+        <li><strong>Price prediction</strong> — Our day-ahead price model is beaten by a simple daily-average baseline on all three grids we tested, so it is not in the product. Scheduling uses live prices and a demand forecast, which does work.</li>
+        <li><strong>Reinforcement learning</strong> — Retired. An earlier dispatch agent was replaced by a constraint solver that returns provably optimal schedules and can explain them. The old results are archived rather than quoted.</li>
+        <li><strong>Real market prices</strong> — Our benchmark runs on synthetic price curves built to match the daily shape of real ISO data. The feed integration for live prices exists but the published numbers do not come from it. Validation against real market prices is the next piece of work, and it could move these figures.</li>
+        <li><strong>Production deployments</strong> — None yet. Results come from a benchmark sweep, not a running customer fleet. First pilots are open now, and you should know that before the call rather than after.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="method" class="section">
+    <div class="wrap">
+      <h2>Four parts, each doing one job</h2>
+      <div class="cards">
+        <article class="card">
+          <h3>Live grid feeds</h3>
+          <p>Wholesale prices from CAISO, ERCOT, NYISO, ISO-NE and PJM, plus carbon intensity from Electricity Maps. Real feeds, refreshed continuously — the raw signal every schedule is built on.</p>
+        </article>
+        <article class="card">
+          <h3>Demand forecast</h3>
+          <p>A neural forecast of facility demand up to two hours ahead, so deferral decisions are made against where load is going rather than where it just was.</p>
+        </article>
+        <article class="card">
+          <h3>A constraint solver, not a heuristic</h3>
+          <p>Jobs, capacity and deadlines go to CP-SAT as a real scheduling model. At pilot scale it returns a provably optimal schedule in under a second, and that schedule can be inspected rather than trusted.</p>
+        </article>
+        <article class="card">
+          <h3>Tests that can fail</h3>
+          <p>Nineteen regression tests run on every build, including null cases where the correct answer is zero. GPU thermal and memory telemetry feed back in, so nothing is scheduled onto hardware that is struggling.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="pilot" class="section alt">
+    <div class="wrap">
+      <h2>Run it against your own workload</h2>
+      <p>HexaGrid runs alongside your cluster. No agents, no hardware changes, no cost to evaluate. You get live price and carbon feeds, demand forecasts, GPU health and the operational dashboard from the first day.</p>
+      <ul>
+        <li>Bare metal, WSL2, EC2 or Docker</li>
+        <li>Any NVIDIA GPU, Pascal generation or later</li>
+        <li>Reviewed by an engineer, not a sales team</li>
+      </ul>
+      <h3>What to put in the first email</h3>
+      <p>GPU count and generation, how you deploy, whether your work is training, inference or both, and roughly what share of it could tolerate a two-hour delay. That last one decides whether HexaGrid can help you at all, so it is worth an honest guess.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>HexaGrid™ is a trademark of Quantum Clarity LLC. © 2026 Quantum Clarity LLC.</p>
+    <p class="note">This is the new Cloudflare-hosted version. hexagrid.ai still points at Squarespace until the domain cutover is approved separately.</p>
+  </div>
+</footer>
+</body>
+</html>
