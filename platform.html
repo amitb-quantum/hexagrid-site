@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Platform — HexaGrid</title>
+<meta name="description" content="Every part testable on its own: live grid and carbon feeds, demand forecast, constraint solver, measurement, carbon trade, and guardrails.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">HexaGrid™</a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="platform.html">Platform</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="page-hero">
+    <div class="wrap">
+      <p class="eyebrow">Platform</p>
+      <h1>Every part <em>testable</em> on its own.</h1>
+      <p class="lede">HexaGrid is a scheduler, not a suite. Live grid prices come in, a demand forecast says where your load is going, a constraint solver decides what runs when, and a test harness checks the whole thing against cases where the right answer is already known. This page is the detail behind that.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>01 — Data in: Live grid and carbon feeds</h2>
+      <p>HexaGrid integrates wholesale price data for all five US ISO regions through the EIA API, cached with a 15-minute TTL, plus carbon intensity for the same regions. In a deployment these are the live inputs every scheduling decision is built on.</p>
+      <p><strong>Read this before the numbers below.</strong> The feed integration covers all five regions, but every figure on this site comes from synthetic price curves built to match the daily shape of real ISO data — not from the live feeds. Validating against real market prices is the next piece of work and it could move these numbers. Scheduling is also single-region: HexaGrid does not move work between ISOs.</p>
+
+      <h2>02 — Forecast: What your site will draw</h2>
+      <p>A neural network predicts facility demand up to two hours ahead, so deferral decisions are made against where load is heading rather than where it just was. It is measured against the honest baseline — assuming demand stays where it is now — on data the model has never seen.</p>
+      <table>
+        <thead><tr><th>Horizon</th><th>HexaGrid error</th><th>Last-value baseline</th><th>Better by</th></tr></thead>
+        <tbody>
+          <tr><td>30 min</td><td>0.60 kW</td><td>2.9 kW</td><td>5×</td></tr>
+          <tr><td>60 min</td><td>0.56 kW</td><td>5.2 kW</td><td>9×</td></tr>
+          <tr><td>120 min</td><td>0.59 kW</td><td>7.3 kW</td><td>12×</td></tr>
+        </tbody>
+      </table>
+      <p>The point is the shape rather than the ratio. HexaGrid's error stays flat as the horizon grows, while the baseline degrades steadily — which is what makes a two-hour deferral window usable at all.</p>
+      <p>This forecasts <strong>demand</strong>, not price. We also built a day-ahead price model and it was beaten by a simple daily-average baseline on every grid we tested, so it is not in the product.</p>
+
+      <h2>03 — The scheduler: A constraint solver, not a heuristic</h2>
+      <p>Jobs, cluster capacity and deadlines are handed to <code>CP-SAT</code> as a real scheduling model — intervals, cumulative capacity constraints and element lookups for time-varying prices. That formulation is what keeps it tractable across a 300-run sweep.</p>
+      <p>Every solve returns a <strong>certified bound</strong>: not just a schedule, but a proof of how far it could possibly be from the best one. Across 300 solves the median certified gap was 0.32% and the worst was 3.50%, with 102 proved exactly optimal. You are told how good the answer is rather than asked to assume it.</p>
+      <p>Densely loaded clusters take longer to solve and land on looser bounds. That is a computational property, not a physical one — we tested whether dense sites have less to gain and found no evidence that they do.</p>
+
+      <h2>04 — How it is measured: Three arms, including a ceiling we cannot beat</h2>
+      <p>Every benchmark runs three ways on the same jobs and the same real price data. The middle arm is the product. The outer two exist so you can see how much room there is on either side of it.</p>
+      <h3>On arrival</h3>
+      <p>Every job runs the moment it lands. No scheduling. This is the baseline the 13.8% is measured against.</p>
+      <h3>HexaGrid</h3>
+      <p>Scheduled against the forecast, then billed at the prices that actually occurred. Forecast error costs you real money here, as it would in production.</p>
+      <h3>Perfect foresight</h3>
+      <p>Scheduled with tomorrow's prices known in advance. Impossible to build. On this data it saves 16.0% — the hard ceiling for the whole idea, and we capture 88% of it.</p>
+
+      <h2>05 — Carbon: A trade you make, not a score we invent</h2>
+      <p>The same schedule can be tuned toward cost or toward emissions. HexaGrid solves for a point on that frontier and reports both outcomes in their own units — dollars and tonnes — and never adds them into a single number, because the exchange rate between them is yours to set, not ours.</p>
+      <p>We publish no carbon percentage. The carbon signal in our benchmark is synthetic, scaled to an EPA annual average rather than measured, so any figure would reflect our own assumptions rather than your grid. The mechanism is built and the trade is real; the magnitude is unverified until it runs on measured intensity data.</p>
+
+      <h2>06 — Guardrails: Tests that are allowed to fail</h2>
+      <p>Nineteen regression tests run on every build. Several are null cases where the correct answer is known in advance — given a flat price curve the scheduler must report exactly zero saving, savings must increase with price volatility, and zero deferrable work must yield zero benefit. An earlier version of this code reported 14.8% savings on a flat curve. The current one reports exactly 0.00% across all 50 such runs, and the test that catches it runs on every build.</p>
+      <p>On the hardware side, NVML telemetry polls every GPU every ten seconds — temperature, power draw, memory use, ECC counts, fan speed — and an anomaly detector watches for combined-metric failure signatures that no single threshold would catch. Nothing gets scheduled onto hardware that is struggling.</p>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="wrap">
+      <h2>Runs beside your cluster</h2>
+      <p>No agents on your nodes, no hardware changes, no vendor lock-in. A single service process, a dashboard, and two API keys. Nothing to evaluate costs you anything.</p>
+      <ul>
+        <li>Bare metal, WSL2, AWS EC2, Docker, Azure</li>
+        <li>Any NVIDIA GPU, Pascal or later</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>HexaGrid™ is a trademark of Quantum Clarity LLC. © 2026 Quantum Clarity LLC.</p>
+    <p class="note">This is the new Cloudflare-hosted version. hexagrid.ai still points at Squarespace until the domain cutover is approved separately.</p>
+  </div>
+</footer>
+</body>
+</html>
