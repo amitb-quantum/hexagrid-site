@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About — HexaGrid</title>
+<meta name="description" content="HexaGrid is built by Quantum Clarity LLC. How we decide what we are allowed to claim, and the four rules we hold ourselves to.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">HexaGrid™</a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="platform.html">Platform</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="page-hero">
+    <div class="wrap">
+      <p class="eyebrow">About</p>
+      <h1>We publish the numbers that <em>work against us</em>.</h1>
+      <p class="lede">HexaGrid is built by Quantum Clarity LLC. This page explains who is behind it and how we decide what we are allowed to claim, because in a category full of unverifiable percentages that turns out to be the thing worth explaining.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>What we build</h2>
+      <p>HexaGrid schedules deferrable GPU work against wholesale electricity prices. A constraint solver decides what runs when, a demand forecast says where site load is heading, and a test harness checks the result against cases where the correct answer is already known.</p>
+      <p>It is a scheduler, not a suite. We would rather do one thing and be able to prove it than list ten and prove none.</p>
+
+      <h2>Who we are</h2>
+      <p>Quantum Clarity LLC is a one-person engineering company. There is no sales team, no growth department, and nobody between you and the person who wrote the solver. If you start a pilot conversation, that is who you will be talking to.</p>
+      <p>The upside is that technical questions get technical answers on the first email. The honest downside is that we are small, and you should weigh that the way you would for any early vendor.</p>
+
+      <h2>Four rules we hold ourselves to</h2>
+      <p>These are not values statements. They are the specific practices that caused us to delete our own headline number when it turned out to be wrong.</p>
+      <h3>Publish the ceiling</h3>
+      <p>Every benchmark includes an arm with perfect foresight — the best any scheduler could possibly do. It caps what we are allowed to claim, and it caught a published figure of ours that sat above the physical limit of the problem.</p>
+      <h3>Test where the answer is zero</h3>
+      <p>Given a flat price curve there is nothing to save, so the correct output is exactly zero. An earlier version of our code reported 14.8%. That test now runs on every build, and it is the reason to trust the other numbers.</p>
+      <h3>State what is not built</h3>
+      <p>Multi-region routing, real market price validation, production deployments. All absent, all named on the site rather than left for you to discover in week two of a pilot.</p>
+      <h3>Report the bound, not the hope</h3>
+      <p>The solver returns a certified distance from optimal on every solve, so you are told how good an answer is rather than asked to assume it. Where a result depends on a condition, the condition is printed next to it.</p>
+
+      <h2>Why this is on the About page</h2>
+      <p>Energy optimisation is a category where nobody can check the vendor's percentage. That makes claim discipline the only thing separating a real result from a plausible one, and it is not something you can evaluate from a datasheet.</p>
+      <p>So we show it instead. Every number on this site carries the condition it holds under, the size of the sample behind it, and where the data came from. If a figure is missing, it is because we could not support it.</p>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="wrap">
+      <h2>Ask us something hard</h2>
+      <p>The fastest way to find out whether HexaGrid is useful to you is to ask the question you think it will fail on. Tell us your GPU count, how you deploy, and roughly what share of your work could tolerate a two-hour delay — that last one decides everything.</p>
+      <p><a href="contact.html">Contact us</a> — or email <a href="mailto:info@quantum-clarity.com">info@quantum-clarity.com</a> directly. The original Squarespace form is not part of this static version; email is the contact route here.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>HexaGrid™ is a trademark of Quantum Clarity LLC. © 2026 Quantum Clarity LLC.</p>
+    <p class="note">This is the new Cloudflare-hosted version. hexagrid.ai still points at Squarespace until the domain cutover is approved separately.</p>
+  </div>
+</footer>
+</body>
+</html>
