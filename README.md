@@ -4,7 +4,17 @@ New, GitHub-first website for HexaGrid. No build step, no framework.
 
 ## What this is
 
-A static site: `index.html` + `styles.css`. Every push to `main` deploys it to Cloudflare Workers through a GitHub Action. This repo is the source of truth for the new site.
+A static site: `index.html` + `styles.css`, plus one page per section of the old Squarespace site. Every push to `main` deploys it to Cloudflare Workers through a GitHub Action. This repo is the source of truth for the new site.
+
+Pages, matching the old site's structure:
+
+- `index.html` — Home: hero, results, limits, method summary, pilot
+- `architecture.html` — Architecture: dashboard views (Overview, Regions, Carbon, Telemetry), with screenshots in `images/`
+- `platform.html` — Platform: feeds, forecast, solver, measurement, carbon trade, guardrails
+- `about.html` — About: Quantum Clarity LLC, claim discipline, four rules
+- `contact.html` — Contact: engineering-led pilot, supported environments, `info@quantum-clarity.com`
+
+The old Squarespace contact form has no backend in this static version, so contact goes by email. Page text is carried over from the old site; do not add claims that are not already on it.
 
 Live address: https://hexagrid-site.amitb1.workers.dev
 
