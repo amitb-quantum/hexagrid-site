@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Architecture — HexaGrid</title>
+<meta name="description" content="What the operator actually sees: screenshots of the running HexaGrid dashboard, with a plain description of what each surface shows and what it does not.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">HexaGrid™</a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="platform.html">Platform</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="page-hero">
+    <div class="wrap">
+      <p class="eyebrow">Architecture</p>
+      <h1>What the operator <em>actually sees</em>.</h1>
+      <p class="lede">Screenshots of the running dashboard, with a plain description of what each surface shows and what it does not. Where a view displays data from our benchmark rather than from a live feed, that is stated on the view.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <figure class="shot">
+        <img src="images/hg1.webp" alt="HexaGrid overview dashboard showing grid prices, workload state and infrastructure health">
+        <figcaption>01 — Overview</figcaption>
+      </figure>
+      <h2>One surface for price, load and health</h2>
+      <p>The overview consolidates grid pricing, current workload state and infrastructure health into a single screen, so an operator can see cost exposure and system status without moving between tools.</p>
+      <p>This is the default landing view and the one most operators keep open.</p>
+
+      <figure class="shot">
+        <img src="images/hg4.webp" alt="HexaGrid regional view comparing price and carbon intensity across five US grid regions">
+        <figcaption>02 — Regions</figcaption>
+      </figure>
+      <h2>Five grid regions, side by side</h2>
+      <p>Price and carbon intensity for CAISO, ERCOT, NYISO, ISO-NE and PJM, scored and displayed together. If you run in more than one place, this is where you see how differently the same hour is priced across them.</p>
+      <p>This view compares regions. It does not move work between them. Cross-region scheduling needs a transfer-cost model we have not built, and until we do, HexaGrid schedules within a single region only.</p>
+
+      <figure class="shot">
+        <img src="images/hg3.webp" alt="HexaGrid carbon view showing emissions intensity as a time-varying input to scheduling">
+        <figcaption>03 — Carbon</figcaption>
+      </figure>
+      <h2>Emissions as a scheduling input</h2>
+      <p>Carbon intensity is treated as a quantity that changes hour by hour, not an annual reporting figure. The scheduler can be pointed at the cheap end or the clean end of that trade, and reports both outcomes in their own units — dollars and tonnes, never merged into one score.</p>
+      <p>The carbon signal behind these figures is synthetic, scaled to an EPA annual average rather than measured. The mechanism is real; the magnitude is unverified until it runs on measured intensity data.</p>
+
+      <figure class="shot">
+        <img src="images/hg5.webp" alt="HexaGrid GPU telemetry view showing power draw, utilisation, thermals and health score">
+        <figcaption>04 — Telemetry</figcaption>
+      </figure>
+      <h2>Nothing gets scheduled onto struggling hardware</h2>
+      <p>NVML telemetry polls every GPU on a ten-second cycle — power draw, utilisation, temperature, memory, ECC counts, fan speed — and an anomaly detector watches for combined-metric failure signatures that no single threshold would catch.</p>
+      <p>Health feeds back into scheduling. A saving that costs you a GPU is not a saving.</p>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="wrap">
+      <h2>See it against your own cluster</h2>
+      <p>The dashboard runs alongside your infrastructure with no agents and no hardware changes. The fastest way to know whether HexaGrid is useful to you is to point it at a real workload and look at the same screens with your own numbers in them.</p>
+      <p><a href="contact.html">Request a pilot</a></p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>HexaGrid™ is a trademark of Quantum Clarity LLC. © 2026 Quantum Clarity LLC.</p>
+    <p class="note">This is the new Cloudflare-hosted version. hexagrid.ai still points at Squarespace until the domain cutover is approved separately.</p>
+  </div>
+</footer>
+</body>
+</html>
